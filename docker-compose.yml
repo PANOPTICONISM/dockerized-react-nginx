@@ -1,0 +1,38 @@
+version: "3.9"
+
+services:
+  nginx:
+    build:
+      context: ./nginx/
+      dockerfile: Dockerfile
+    container_name: nginx_dev
+    restart: unless-stopped
+    stdin_open: true
+    links:
+      - app
+    volumes:
+      - prod:/usr/share/nginx/html
+    ports:
+      - 80:80
+      - 443:443
+    networks:
+      - bridge
+
+  app:
+    build:
+      context: ./development/
+      dockerfile: Dockerfile
+    container_name: react_app
+    restart: unless-stopped
+    stdin_open: true
+    volumes:
+      - prod:/usr/share/nginx/html
+    networks:
+      - bridge
+
+networks:
+  bridge:
+    driver: bridge
+
+volumes:
+  prod:
